@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 $(document).on("click", "#startService", function(){
-	var scanner = phonegap.require("phonegap/plugin/BarcodeScanner");
+	var scanner = cordova.require("cordova/plugin/BarcodeScanner");
 
    scanner.scan(
       function (result) {
