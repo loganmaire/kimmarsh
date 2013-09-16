@@ -6,10 +6,10 @@
         id        = "nz.co.designsolutions.KMRemind"
         version   = "1.0.0">
 
-    <name>CM Audit App</name>
+    <name>Kim Marsh Remider App</name>
 
     <description>
-       CM Sample App.
+       W.O.F & Service Reminder App.
     </description>
 
     <author href="http://designsolutions.co.nz" email="support@designsolutions.co.nz">
