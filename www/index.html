@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--HTML5 doctype-->
+<html>	
+ 
+    <head>
+        <title>Kim Marsh Reminder App</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <link rel="stylesheet" type="text/css" href="frameworks/appframework/css/icons.css" />
+        <link rel="stylesheet" type="text/css" href="frameworks/appframework/css/af.ui.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+ 
+        <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+		<script type="text/javascript" charset="utf-8" src="frameworks/appframework/ui/appframework.ui.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="frameworks/kinvey/kinvey-phonegap-1.0.4.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="js/logic.js"></script>
+
+    </head>
+ 
+    <body>
+        <div id="afui" class="light"> <!-- this is the main container div.  This way, you can have only part of your app use UI -->
+            <!-- splashscreen -->
+			<div id="splashscreen" class='ui-loader'>
+				<div class="splash-wrapper">
+					<div class="splash">
+						<div class="splash-loader">
+							<span><img src="res/icon/webos/icon128.png"/></span>
+						</div>
+					</div>
+				</div>
+			</div><!-- end splash -->
+           
+		    <div id="header">
+                
+            </div>
+			
+			
+			<div id="content">
+				
+				<div title='Sign In' id="signin" class="panel">
+					<br/>
+					<div class="signin-result"></div>
+					<br/>
+					<form action="javascript:doLogin()" id="form-signin">
+						<div>
+						<input name="name" class="required" data-minlen=3 id="namein" placeholder="Name" value="" type="text">
+						</div>
+						<div>
+						<input name="phone" class="required" data-minlen=3 id="phonein" placeholder="Phone Nnumber" value="" type="text">
+						</div>
+						<input type='submit' id="do-signin" class="button block" value="GO!"/>
+					</form>
+
+				</div>
+				
+				<div title='Welcome' id="main" class="panel" selected="true">
+					<br/>
+					<br/>
+					<p class="startblurb">Hi! Tap an option below to get started.</p>
+					<div class="b-list">
+					<input type="button" class="button block" value="Scan Barcode" id="doScan"/>
+					<input type="button" class="button block" value="Book Service" id="startBooking"/>
+					</div>
+				</div>
+				
+				<div title='Scan Barcode' id="scan" class="panel">
+
+					<p>Scanner...</p>
+
+				</div>
+				
+				<div title='Bookings' id="book" class="panel">
+
+					<h2>Book service</h2>
+					<input type="text" class="required" id="bookaem" placeholder="Name" />
+					<input type="email" class="required" id="bookemail" placeholder="Email" />
+					<p>whatever else you need to add...</p>
+					<input type="button" class="button block" value="Book" id="doBooking"/>
+
+				</div>
+				
+			</div>
+            
+        </div><!-- end afui -->
+    </body>
+</html>
