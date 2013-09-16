@@ -117,20 +117,37 @@ document.addEventListener("DOMContentLoaded", function(){
 }, false);
 
 
-$(document).on("click", "#startService", function(){
+$(document).on("click", "#startScan", function(){
+	$.ui.showMask("Warming up scanner...");
 	var scanner = cordova.require("cordova/plugin/BarcodeScanner");
-
-   scanner.scan(
-      function (result) {
-          alert("We got a barcode\n" +
-                "Result: " + result.text + "\n" +
-                "Format: " + result.format + "\n" +
-                "Cancelled: " + result.cancelled);
-      }, 
-      function (error) {
-          alert("Scanning failed: " + error);
-      }
-   );
+	
+	scanner.scan(
+		function (result) {
+			$.ui.hideMask();
+			
+			if(!result.cancelled){
+				if(result.text=="wof12-code") {
+					alert("W.O.F reminder set for 12 months");
+					//push to kinvey;
+				} else if (result.text=="wof6-code") {
+					alert("W.O.F reminder set for 6 months");
+					//push to kinvey;
+				} else if(result.text=="ser6-code") {
+					alert("Service reminder set for 6 months");
+					//push to kinvey;
+				} else {
+					alert("barcode not recognised");
+				}
+			} else {
+				alert("No barcode returned");
+			}
+			
+		}, 
+		function (error) {
+			alert("Scanning failed: " + error);
+			$.ui.hideMask();
+		}
+	);
 });
 
 $(document).on("click",".signbackin", function(){
