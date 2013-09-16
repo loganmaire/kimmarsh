@@ -38,29 +38,30 @@
 			
 			<div id="content">
 				
-				<div title='Sign In' id="signin" class="panel">
+				<div title='Register' id="signin" class="panel">
 					<br/>
 					<div class="signin-result"></div>
 					<br/>
-					<form action="javascript:doLogin()" id="form-signin">
+					<p>Please enter a username to get started.</p>
+					<form action="javascript:doRegister()" id="form-signin">
 						<div>
-						<input name="name" class="required" data-minlen=3 id="namein" placeholder="Name" value="" type="text">
+							<input name="username" class="required" data-minlen=3 id="userin" placeholder="Username" value="" type="text">
 						</div>
-						<div>
-						<input name="phone" class="required" data-minlen=3 id="phonein" placeholder="Phone Nnumber" value="" type="text">
-						</div>
-						<input type='submit' id="do-signin" class="button block" value="GO!"/>
-					</form>
 
+						<input type='submit' id="do-register" class="button block" value="GO!"/>
+					</form>
+					<p>Already registered? <a href="#" class="signbackin">Tap here</a></p>
 				</div>
 				
 				<div title='Welcome' id="main" class="panel" selected="true">
 					<br/>
 					<br/>
-					<p class="startblurb">Hi! Tap an option below to get started.</p>
+					<p class="startblurb">Hi! <span class='username'></span> Tap an option below to get started.</p>
 					<div class="b-list">
-					<input type="button" class="button block" value="Scan Barcode" id="doScan"/>
-					<input type="button" class="button block" value="Book Service" id="startBooking"/>
+					<a href="#scan" class="button block" id="startScan">Scan Sticker</a>
+					<a href="#bookwof" class="button block" id="startWof">Book W.O.F</a>
+					<a href="#" class="button block" id="startService">Book Service</a>
+					<a href="#" class="button block" id="viewReminders">View Reminders</a>
 					</div>
 				</div>
 				
@@ -73,6 +74,16 @@
 				<div title='Bookings' id="book" class="panel">
 
 					<h2>Book service</h2>
+					<input type="text" class="required" id="bookaem" placeholder="Name" />
+					<input type="email" class="required" id="bookemail" placeholder="Email" />
+					<p>whatever else you need to add...</p>
+					<input type="button" class="button block" value="Book" id="doBooking"/>
+
+				</div>
+				
+				<div title='Bookings' id="bookwof" class="panel">
+
+					<h2>Book W.O.F</h2>
 					<input type="text" class="required" id="bookaem" placeholder="Name" />
 					<input type="email" class="required" id="bookemail" placeholder="Email" />
 					<p>whatever else you need to add...</p>

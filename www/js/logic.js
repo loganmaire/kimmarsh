@@ -9,7 +9,7 @@ if (!((window.DocumentTouch && document instanceof DocumentTouch) || 'ontouchsta
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-var appIsSet = false;
+var aSheet = false;
 
 $.ui.autoLaunch = false; //By default, it is set to true and you're app will run right away.  We set it to false to show a splashscreen
 
@@ -35,15 +35,15 @@ var app = {
 	//################################################# DEVICE READY ###############################################################
 	//##############################################################################################################################
 	onDeviceReady: function() {
-		//navigator.splashscreen.hide();
 		
-		/*var kobject = Kinvey.init({
-			appKey    : 'kid_Per-Irzvrf',
-			appSecret : '637fa5fb52634346bb41f8c979244956',
+		
+		var kobject = Kinvey.init({
+			appKey    : 'kid_VVdDuTJIT9',
+			appSecret : '243e2c845960414ebd41c4209c4111d4',
 			sync      : { enable: true, online : navigator.onLine }
 		});
 		
-		kobject.then(function(activeUser) {
+		/*kobject.then(function(activeUser) {
 			var user = Kinvey.getActiveUser();
 			var promise = Kinvey.User.me({
 				success: function(response) {
@@ -94,21 +94,17 @@ var app = {
 $.ui.ready(function () {
 	$.ui.removeFooterMenu();
 	
-	if (localStorage.myname) {
-			alert(localStorage.myname)
-		} else {
-			alert("NO LS");	
-		}
-	/*if(haveUser == false) {
-		$.ui.loadContent("#signin",true,true,"none");
-		 
-		$.ui.clearHistory();
-	} else {
-		initStartPage();
+	if (localStorage.username) {
+		$(".username").html(localStorage.username);
 		$.ui.loadContent("#main",true,true,"none");
-		 
-		$.ui.clearHistory();
-	}*/
+		
+	} else {
+		$.ui.loadContent("#signin",true,true,"none");
+	 
+			
+	}
+	$.ui.clearHistory();
+	
 });
 ////////////////////////////////////////// INIT AFUI //////////////////////////////////////////////
 document.addEventListener("DOMContentLoaded", function(){ 
@@ -121,14 +117,125 @@ document.addEventListener("DOMContentLoaded", function(){
 }, false);
 
 
-$(document).on("click", "#startBooking", function(){
-	localStorage.myname = "logan";
-	alert("SET");
+$(document).on("click", "#startService", function(){
+	var scanner = phonegap.require("phonegap/plugin/BarcodeScanner");
+
+   scanner.scan(
+      function (result) {
+          alert("We got a barcode\n" +
+                "Result: " + result.text + "\n" +
+                "Format: " + result.format + "\n" +
+                "Cancelled: " + result.cancelled);
+      }, 
+      function (error) {
+          alert("Scanning failed: " + error);
+      }
+   );
 });
 
-function doExit() {
+$(document).on("click",".signbackin", function(){
+	doRegister(true);							   
+});
 
-	navigator.app.exitApp();
+function doRegister(signin) {	
+	var conn = checkConnection();
+	if(conn=='none') {
+		alert("Please enable internet access to continue.");
+	} else {
+		var val = validate("#form-signin");
+		
+		if(val) {
+			$.ui.showMask("Checking Availability...");
+			
+			var promise = Kinvey.User.exists($("#userin").val(), {
+				success: function(usernameExists) {
+					if(usernameExists == false) {
+						$.ui.showMask("Registering...");
+						var promise = Kinvey.User.signup({
+							username : $("#userin").val(),
+							password : "0000"
+						}, {
+							success: function(response) {
+								
+								var user = Kinvey.getActiveUser();
+								user.deviceid = device.uuid;
+								var promise = Kinvey.User.update(user,{
+									success: function(){
+										$.ui.hideMask();
+				
+										
+										localStorage.username = $("#userin").val();
+										$(".username").html($("#userin").val());
+										
+										$(".signin-result").html("").hide();
+										
+										$.ui.loadContent("#main",true,true,"none");
+									},
+									error: function(e) {
+										alert(e.name);
+									}
+								});
+						
+							},
+							error: function(error) {
+								$(".signin-result").html(error).show();
+								$.ui.hideMask();
+								$(".signin-loader").hide();
+							}
+						});
+					
+					} else {
+						if(signin) {
+							$.ui.showMask("Signing in...")
+							var promise = Kinvey.User.login({
+								username : $("#userin").val(),
+								password : "0000"
+							}, {
+								success: function(response) {
+									
+									var user = Kinvey.getActiveUser();
+									user.deviceid = device.uuid;
+									var promise = Kinvey.User.update(user,{
+										success: function(){
+											$.ui.hideMask();
+					
+											
+											localStorage.username = $("#userin").val();
+											$(".username").html($("#userin").val());
+											
+											$(".signin-result").html("").hide();
+											
+											$.ui.loadContent("#main",true,true,"none");
+										},
+										error: function(e) {
+											alert(e.name);
+										}
+									});
+							
+								},
+								error: function(error) {
+									$(".signin-result").html(error).show();
+									$.ui.hideMask();
+									$(".signin-loader").hide();
+								}
+							});
+						} else {
+							$.ui.hideMask();
+							$(".signin-result").html("This username is already taken. Please choose another username.").show();
+						}
+					}
+				}
+			});
+		}
+	}
+}
+
+function doExit() {
+	
+	localStorage.removeItem('username');
+	aSheet.hideSheet();
+	aSheet = false;
+	//navigator.app.exitApp();
 }
 
 
@@ -160,33 +267,6 @@ function initStartPage(){
 	});	
 };
 
-function getChapelFromGeo() {
-
-	navigator.geolocation.getCurrentPosition(function(loc) {
-		
-		var coord = [loc.coords.longitude, loc.coords.latitude];
-		
-		// Query for chapels close by.
-		var query = new Kinvey.Query();
-		query.near('_geoloc', coord, 5);
-		
-		var promise = Kinvey.DataStore.find('Buildings', query, {
-			success : function(response) {
-				$("#location-status").html("Location: "+ parseFloat(coord[0]).toFixed(5)+":"+parseFloat(coord[1]).toFixed(5));
-				$(".b"+response[0]._id).addClass('local-building');
-				$(".b"+response[0]._id + " a").append('<span class="af-badge tr">Closest</span>');
-			}
-		}, function(error){
-			console.log("kinvey location error");
-		});
-	}, function(error){
-		console.log ("phonegap location error");
-		$("#location-status").html("Location unavailable");
-	},
-	{ maximumAge: 30000, timeout: 6000, enableHighAccuracy: true }
-	);	
-	
-}
 
 
 function checkConnection() {
